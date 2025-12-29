@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+
 class VectorDB:
     """
     A simple vector database wrapper using ChromaDB with HuggingFace embeddings.
@@ -26,8 +27,9 @@ class VectorDB:
         )
 
         # Initialize ChromaDB client
+        
         self.client = chromadb.PersistentClient(path="./chroma_db")
-
+        #self.client.delete_collection(name=self.collection_name)
         # Load embedding model
         print(f"Loading embedding model: {self.embedding_model_name}")
         self.embedding_model = SentenceTransformer(self.embedding_model_name)
@@ -80,7 +82,7 @@ class VectorDB:
     )
         #print("TODO: Implement text chunking logic")
         chunks = text_splitter.split_text(text)
-        print(f"Split text into {len(chunks)} chunks.")
+       
 
         return chunks
 
@@ -104,6 +106,7 @@ class VectorDB:
         # Your implementation here
 
         for doc in documents:
+            #print(f"Processing document: {doc.metadata.get('title', 'unknown')}")
             content = doc.page_content
             metadata = doc.metadata
 
@@ -116,8 +119,7 @@ class VectorDB:
 
             for i, chunk in enumerate(chunks):
                 # Create a unique ID for every chunk
-                # Combining source name and index helps with traceability
-                unique_id = f"{metadata.get('source', 'doc')}_{i}_{str(uuid.uuid4())[:8]}"
+                unique_id = f"{metadata.get('title', 'doc')}_{i}_{str(uuid.uuid4())[:8]}"
 
                 chunk_texts.append(chunk)
                 chunk_ids.append(unique_id)
@@ -125,19 +127,19 @@ class VectorDB:
                 chunk_meta = metadata.copy()
                 chunk_meta["chunk_index"] = i
                 chunk_metadatas.append(chunk_meta)
-        embeddings = self.embedding_model.encode(chunk_texts).tolist()
-
-        try:
-            self.collection.add(
-                ids=chunk_ids,
-                embeddings=embeddings,
-                metadatas=chunk_metadatas,
-                documents=chunk_texts
-            )
-            print(f"Successfully ingested {len(chunks)} chunks from {metadata.get('source')}")
+                embeddings = self.embedding_model.encode(chunk_texts).tolist()
+                #print(f'\nembeddings for document {embeddings}')
+                try:
+                    self.collection.add(
+                    ids=chunk_ids,
+                    embeddings=embeddings,
+                    metadatas=chunk_metadatas,
+                    documents=chunk_texts
+                )
+                    #print(f"Successfully ingested {len(chunks)} chunks from {metadata.get('title')}")
             
-        except Exception as e:
-            print(f"Failed to store chunks for {metadata.get('source')}: {e}")
+                except Exception as e:
+                    print(f"Failed to store chunks for {metadata.get('title')}: {e}")
 
         print("Documents added to vector database")
 
@@ -166,6 +168,7 @@ class VectorDB:
             # Ensure it is converted to a list format for ChromaDB
             query_embedding = self.embedding_model.encode([query]).tolist()
 
+
         # 2. Search the ChromaDB collection
         # We pass the embedding to 'query_embeddings'
             results = self.collection.query(
@@ -173,6 +176,8 @@ class VectorDB:
                 n_results=n_results,
                 include=["documents", "metadatas", "distances"]
             )
+
+            print(results["metadatas"])
 
             return {
                 "documents": results["documents"][0],
