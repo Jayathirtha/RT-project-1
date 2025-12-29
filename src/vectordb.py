@@ -78,7 +78,7 @@ class VectorDB:
         chunk_size=chunk_size,   # The maximum number of characters in each chunk
         chunk_overlap=100, # Number of characters to overlap between chunks
         length_function=len,
-        is_separator_regex=False,
+        separators=["\n\n", "\n", ". ", " ", ""],
     )
         #print("TODO: Implement text chunking logic")
         chunks = text_splitter.split_text(text)
@@ -106,7 +106,7 @@ class VectorDB:
         # Your implementation here
 
         for doc in documents:
-            #print(f"Processing document: {doc.metadata.get('title', 'unknown')}")
+            #whichprint(f"Processing document: {doc.metadata.get('source', 'unknown')}")
             content = doc.page_content
             metadata = doc.metadata
 
@@ -119,7 +119,8 @@ class VectorDB:
 
             for i, chunk in enumerate(chunks):
                 # Create a unique ID for every chunk
-                unique_id = f"{metadata.get('title', 'doc')}_{i}_{str(uuid.uuid4())[:8]}"
+                # Combining source name and index helps with traceability
+                unique_id = f"{metadata.get('source', 'doc')}_{i}_{str(uuid.uuid4())[:8]}"
 
                 chunk_texts.append(chunk)
                 chunk_ids.append(unique_id)
@@ -128,7 +129,7 @@ class VectorDB:
                 chunk_meta["chunk_index"] = i
                 chunk_metadatas.append(chunk_meta)
                 embeddings = self.embedding_model.encode(chunk_texts).tolist()
-                #print(f'\nembeddings for document {embeddings}')
+        #print(f'\nembeddings for document {embeddings}')
                 try:
                     self.collection.add(
                     ids=chunk_ids,
@@ -139,7 +140,7 @@ class VectorDB:
                     #print(f"Successfully ingested {len(chunks)} chunks from {metadata.get('title')}")
             
                 except Exception as e:
-                    print(f"Failed to store chunks for {metadata.get('title')}: {e}")
+                    print(f"Failed to store chunks for {metadata.get('source')}: {e}")
 
         print("Documents added to vector database")
 
@@ -177,7 +178,7 @@ class VectorDB:
                 include=["documents", "metadatas", "distances"]
             )
 
-            print(results["metadatas"])
+            #print(results)
 
             return {
                 "documents": results["documents"][0],

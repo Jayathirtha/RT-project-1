@@ -1,21 +1,24 @@
 import glob
 import os
-import PyPDF2
 from typing import List
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
-from utility import get_document_type
 from vectordb import VectorDB
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_community.document_loaders import (
+    TextLoader, 
+    CSVLoader, 
+    PyPDFLoader, 
+    JSONLoader,
+    DirectoryLoader
+)
 
 # Load environment variables
 load_dotenv()
-
 
 
 def load_documents() -> List[str]:
@@ -33,58 +36,23 @@ def load_documents() -> List[str]:
 
     # Your implementation here
     data_dir = os.path.join(os.getcwd(),'data')
-    results = []
-    temp_result  = []
-    # Check if directory exists
-    if not os.path.exists(data_dir):
-        print(f"Error: The directory {data_dir} does not exist.")
-        return results
+    # Define a mapping of file extensions to their loader classes
+    loader_mapping = {
+        ".pdf": PyPDFLoader,
+        ".csv": CSVLoader,
+        ".txt": TextLoader,
+        ".json": lambda path: JSONLoader(path, jq_schema=".[]", text_content=False)
+    }
 
-    # Use glob to find all files in the directory
-    files = glob.glob(os.path.join(data_dir, "*"))
-
-    for file_path in files:
-        file_name = os.path.basename(file_path)
-        extension = os.path.splitext(file_name)[1].lower()
-        
-        try:
-            content = ""
-            
-            # Text file handler
-            if extension == '.txt':
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-            
-            # PDF file handler
-            elif extension == '.pdf':
-                loader = PyMuPDFLoader(file_path)
-                document = loader.load()
-                content = "\n".join([page.page_content for page in document])
-            
-            else:
-                print(f"Skipping unsupported file type: {file_name}")
-                continue
-
-            # Append to list if content was successfully extracted
-            if content.strip():
-                temp_result.append({
-                    "content": content.strip(),
-                    "metadata": {
-                        "type": get_document_type(file_name),
-                        "title": file_name
-                    }
-                })
-
-        except Exception as e:
-            print(f"Error processing {file_name}: {str(e)}")
-
-    results = [
-    Document(page_content=item["content"], metadata=item["metadata"])
-    for item in temp_result
-    ]
-
+    documents = []
+    for ext, loader_cls in loader_mapping.items():
+        # Scans directory for the specific extension
+        loader = DirectoryLoader(data_dir, glob=f"**/*{ext}", loader_cls=loader_cls, show_progress=True)
+        documents.extend(loader.load())
+    
+    
     #print(f"type {type(results)} documents from {data_dir}")
-    return results
+    return documents
 
 
 class RAGAssistant:
@@ -210,17 +178,21 @@ class RAGAssistant:
             Dictionary containing the answer and retrieved context
         """
         llm_answer = ""
-        # Implement the RAG query pipeline
+        # TODO: Implement the RAG query pipeline
         # HINT: Use self.vector_db.search() to retrieve relevant context chunks
         # HINT: Combine the retrieved document chunks into a single context string
         # HINT: Use self.chain.invoke() with context and question to generate the response
         # HINT: Return a string answer from the LLM
 
         # Your implementation here
+
+        print("# TODO: Implement the RAG query pipeline")
         search_results = self.vector_db.search(input, n_results=n_results)
         context_text = "\n\n---\n\n".join(search_results["documents"])
 
         try:
+
+            print(f'context_text: {context_text}')
             response = self.chain.invoke({
             "context": context_text,
             "question": input
@@ -229,8 +201,8 @@ class RAGAssistant:
             #print(f'response: {response}')
 
             answer = str(response) if hasattr(response, 'content') else response
-            #TODO calculate distance properly
-            return "\n" + answer + "\n\n" + "distance : " + ", ".join([str(1 - d) for d in search_results["distances"]])
+
+            return answer + "\n\n" + "distance : " + str(search_results["distances"])
         
         except Exception as e:
             return {
