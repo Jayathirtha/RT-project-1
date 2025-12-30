@@ -80,7 +80,7 @@ class VectorDB:
         length_function=len,
         separators=["\n\n", "\n", ". ", " ", ""],
     )
-        #print("TODO: Implement text chunking logic")
+    
         chunks = text_splitter.split_text(text)
        
 
@@ -176,8 +176,6 @@ class VectorDB:
                 n_results=n_results,
                 include=["documents", "metadatas", "distances"]
             )
-
-            #print(results)
 
             return {
                 "documents": results["documents"][0],

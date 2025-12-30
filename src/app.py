@@ -50,8 +50,6 @@ def load_documents() -> List[Document]:
         loader = DirectoryLoader(data_dir, glob=f"**/*{ext}", loader_cls=loader_cls, show_progress=True)
         documents.extend(loader.load())
     
-    
-    #print(f"type {type(results)} documents from {data_dir}")
     return documents
 
 
