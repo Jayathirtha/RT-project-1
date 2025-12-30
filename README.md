@@ -44,7 +44,7 @@ This project implements a complete RAG system that combines:
 ## 📁 Project Structure
 
 ```
-RT-project-1-1/
+RT-project-1/
 ├── src/
 │   ├── app.py              # Main RAG assistant implementation
 │   └── vectordb.py         # Vector database wrapper (ChromaDB)
@@ -61,7 +61,7 @@ RT-project-1-1/
 
 ## 🔧 Prerequisites
 
-- **Python**: 3.11 or
+- **Python**: 3.11 or higher
 - **API Keys**: At least one of the following:
   - OpenAI API key (for GPT models)
   - Groq API key (for Llama models)
@@ -72,7 +72,7 @@ RT-project-1-1/
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd RT-project-1-1
+   cd RT-project-1
    ```
 
 2. **Create a virtual environment** (recommended):
@@ -220,8 +220,6 @@ This project is licensed under the **Creative Commons Attribution-NonCommercial-
 **You are free to:**
 - ✅ Share: Copy and redistribute the material
 - ✅ Adapt: Remix, transform, and build upon the material
-
-**Full license text**: See [LICENSE](LICENSE) file for complete terms.
 
 ## 🤝 Contributing
 
