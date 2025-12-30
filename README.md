@@ -61,7 +61,7 @@ RT-project-1-1/
 
 ## 🔧 Prerequisites
 
-- **Python**: 3.11 or
+- **Python**: 3.11 or higher
 - **API Keys**: At least one of the following:
   - OpenAI API key (for GPT models)
   - Groq API key (for Llama models)
