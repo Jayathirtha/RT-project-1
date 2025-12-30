@@ -21,7 +21,7 @@ from langchain_community.document_loaders import (
 load_dotenv()
 
 
-def load_documents() -> List[str]:
+def load_documents() -> List[Document]:
     """
     Load documents for demonstration.
 
@@ -175,41 +175,25 @@ class RAGAssistant:
             n_results: Number of relevant chunks to retrieve
 
         Returns:
-            Dictionary containing the answer and retrieved context
+            String containing the answer
         """
-        llm_answer = ""
-        # TODO: Implement the RAG query pipeline
-        # HINT: Use self.vector_db.search() to retrieve relevant context chunks
-        # HINT: Combine the retrieved document chunks into a single context string
-        # HINT: Use self.chain.invoke() with context and question to generate the response
-        # HINT: Return a string answer from the LLM
-
-        # Your implementation here
-
-        print("# TODO: Implement the RAG query pipeline")
         search_results = self.vector_db.search(input, n_results=n_results)
         context_text = "\n\n---\n\n".join(search_results["documents"])
 
         try:
-
             print(f'context_text: {context_text}')
             response = self.chain.invoke({
-            "context": context_text,
-            "question": input
+                "context": context_text,
+                "question": input
             })
 
-            #print(f'response: {response}')
-
-            answer = str(response) if hasattr(response, 'content') else response
+            # Extract content attribute if it exists, otherwise use response as-is
+            answer = response.content if hasattr(response, 'content') else str(response)
 
             return answer + "\n\n" + "distance : " + str(search_results["distances"])
         
         except Exception as e:
-            return {
-                "answer": f"An error occurred while generating the response: {str(e)}",
-                "sources": [],
-                "retrieved_chunks": []
-            }
+            return f"An error occurred while generating the response: {str(e)}"
 
 
 def main():

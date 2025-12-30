@@ -106,11 +106,8 @@ class VectorDB:
         # Your implementation here
 
         for doc in documents:
-            #whichprint(f"Processing document: {doc.metadata.get('source', 'unknown')}")
             content = doc.page_content
             metadata = doc.metadata
-
-            #print(f'content: {doc.page_content[:100]}...')
 
             chunks = self.chunk_text(content)
             chunk_texts = []
@@ -128,19 +125,21 @@ class VectorDB:
                 chunk_meta = metadata.copy()
                 chunk_meta["chunk_index"] = i
                 chunk_metadatas.append(chunk_meta)
-                embeddings = self.embedding_model.encode(chunk_texts).tolist()
-        #print(f'\nembeddings for document {embeddings}')
-                try:
-                    self.collection.add(
+            
+            # Compute embeddings for all chunks at once (outside the loop)
+            embeddings = self.embedding_model.encode(chunk_texts).tolist()
+            
+            # Add all chunks to the collection at once (outside the loop)
+            try:
+                self.collection.add(
                     ids=chunk_ids,
                     embeddings=embeddings,
                     metadatas=chunk_metadatas,
                     documents=chunk_texts
                 )
-                    #print(f"Successfully ingested {len(chunks)} chunks from {metadata.get('title')}")
             
-                except Exception as e:
-                    print(f"Failed to store chunks for {metadata.get('source')}: {e}")
+            except Exception as e:
+                print(f"Failed to store chunks for {metadata.get('source', 'unknown')}: {e}")
 
         print("Documents added to vector database")
 
