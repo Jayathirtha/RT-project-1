@@ -221,8 +221,6 @@ This project is licensed under the **Creative Commons Attribution-NonCommercial-
 - ✅ Share: Copy and redistribute the material
 - ✅ Adapt: Remix, transform, and build upon the material
 
-**Full license text**: See [LICENSE](LICENSE) file for complete terms.
-
 ## 🤝 Contributing
 
 This is an educational project. Contributions, suggestions, and improvements are welcome!
