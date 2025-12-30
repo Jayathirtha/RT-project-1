@@ -44,3 +44,4 @@ Thumbs.db
 
 lesson.md
 data/chroma/chroma.sqlite3
+.env
