@@ -44,7 +44,7 @@ This project implements a complete RAG system that combines:
 ## 📁 Project Structure
 
 ```
-RT-project-1-1/
+RT-project-1/
 ├── src/
 │   ├── app.py              # Main RAG assistant implementation
 │   └── vectordb.py         # Vector database wrapper (ChromaDB)
@@ -72,7 +72,7 @@ RT-project-1-1/
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd RT-project-1-1
+   cd RT-project-1
    ```
 
 2. **Create a virtual environment** (recommended):
