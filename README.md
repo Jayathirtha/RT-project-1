@@ -123,7 +123,7 @@ RT-project-1/
 Run the RAG assistant:
 
 ```bash
-python src/app.py
+python .\src\app.py
 ```
 
 The assistant will:
