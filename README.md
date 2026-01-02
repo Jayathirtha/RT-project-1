@@ -1,4 +1,4 @@
-# RAG Implementation Tutorial
+# RAG Implementation Project
 
 A comprehensive educational project demonstrating **Retrieval Augmented Generation (RAG)** implementation using vector databases, embeddings, and large language models. This project serves as a tutorial for students and educators learning about modern AI/ML systems.
 
