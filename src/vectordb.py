@@ -1,9 +1,22 @@
 import os
 import uuid
+import logging
 import chromadb
 from typing import List, Dict, Any
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+# Set up logger
+logger = logging.getLogger(__name__)
+
+# Import seed setting utility
+try:
+    from utils import set_random_seed
+    # Set random seed for reproducibility
+    set_random_seed()
+except ImportError:
+    # If utils module not available, skip seed setting
+    pass
 
 
 class VectorDB:
@@ -27,10 +40,9 @@ class VectorDB:
         )
 
         # Initialize ChromaDB client
-        
         self.client = chromadb.PersistentClient(path="./chroma_db")
         # Load embedding model
-        print(f"Loading embedding model: {self.embedding_model_name}")
+        logger.info(f"Loading embedding model: {self.embedding_model_name}")
         self.embedding_model = SentenceTransformer(self.embedding_model_name)
 
         # Get or create collection
@@ -39,7 +51,7 @@ class VectorDB:
             metadata={"description": "RAG document collection"},
         )
 
-        print(f"Vector database initialized with collection: {self.collection_name}")
+        logger.info(f"Vector database initialized with collection: {self.collection_name}")
 
     def chunk_text(self, text: str, chunk_size: int = 500) -> List[str]:
         """
@@ -66,8 +78,7 @@ class VectorDB:
     )
     
         chunks = text_splitter.split_text(text)
-       
-
+        logger.debug(f"Chunked text into {len(chunks)} chunks")
         return chunks
 
     def add_documents(self, documents: List) -> None:
@@ -78,7 +89,7 @@ class VectorDB:
             documents: List of documents
         """
 
-        print(f"Processing {len(documents)} documents...")
+        logger.info(f"Processing {len(documents)} documents...")
 
         for doc in documents:
             content = doc.page_content
@@ -114,9 +125,9 @@ class VectorDB:
                 )
             
             except Exception as e:
-                print(f"Failed to store chunks for {metadata.get('source', 'unknown')}: {e}")
+                logger.error(f"Failed to store chunks for {metadata.get('source', 'unknown')}: {e}")
 
-        print("Documents added to vector database")
+        logger.info("Documents added to vector database")
 
     def search(self, query: str, n_results: int = 5) -> Dict[str, Any]:
         """
@@ -147,7 +158,7 @@ class VectorDB:
                 "ids": results["ids"][0]
             }
         except Exception as e:
-            print(f"Error during similarity search: {e}")
+            logger.error(f"Error during similarity search: {e}")
             return {
                 "documents": [],
                 "metadatas": [],
