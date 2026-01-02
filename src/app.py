@@ -164,18 +164,7 @@ class RAGAssistant:
         """
         search_results = self.vector_db.search(input, n_results=n_results)
         
-        # Filter out chunks with distance > 1
-        filtered_indices = [i for i, distance in enumerate(search_results["distances"]) if distance <= 1]
-        
-        # If no chunks remain after filtering, return early
-        if not filtered_indices:
-            return "I'm sorry, that information is not in this document."
-        
-        # Filter all search results to keep only chunks with distance <= 1
-        filtered_documents = [search_results["documents"][i] for i in filtered_indices]
-        filtered_distances = [search_results["distances"][i] for i in filtered_indices]
-        
-        context_text = "\n\n---\n\n".join(filtered_documents)
+        context_text = "\n\n---\n\n".join(search_results["documents"])
 
         try:
             response = self.chain.invoke({
@@ -183,9 +172,8 @@ class RAGAssistant:
                 "question": input
             })
 
-            # Extract content attribute if it exists, otherwise use response as-is
-            if filtered_distances:
-                answer = response.content if hasattr(response, 'content') else str(response)
+
+            answer = response.content if hasattr(response, 'content') else str(response)
 
             return answer + "\n\n" + "distance : " + str(search_results["distances"])
         
