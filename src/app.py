@@ -29,12 +29,8 @@ def load_documents() -> List[Document]:
         List of sample documents
     """
     results = []
-    # TODO: Implement document loading
-    # HINT: Read the documents from the data directory
-    # HINT: Return a list of documents
-    # HINT: Your implementation depends on the type of documents you are using (.txt, .pdf, etc.)
 
-    # Your implementation here
+   
     data_dir = os.path.join(os.getcwd(),'data')
     # Define a mapping of file extensions to their loader classes
     loader_mapping = {
@@ -72,12 +68,7 @@ class RAGAssistant:
         # Initialize vector database
         self.vector_db = VectorDB()
 
-        # Create RAG prompt template
-        # TODO: Implement your RAG prompt template
-        # HINT: Use ChatPromptTemplate.from_template() with a template string
-        # HINT: Your template should include placeholders for {context} and {question}
-        # HINT: Design your prompt to effectively use retrieved context to answer questions
-        self.prompt_template = None  # Your implementation here
+        self.prompt_template = None  
 
         template = """
         You are a helpful assistant that answers questions strictly based on the provided context.
@@ -107,13 +98,8 @@ class RAGAssistant:
         Response formatting:
 	        - Provide answers in markdown format.
 	        - Provide concise answers in bullet points when relevant.
-
-        Base your responses on this publication content:
-
-        === PUBLICATION CONTENT ===
-        <publication content omitted for brevity...>
-        === END OF PUBLICATION CONTENT ===
         """
+        
         rag_prompt = ChatPromptTemplate.from_template(template)
         self.prompt_template = rag_prompt
         # Create the chain
@@ -179,7 +165,6 @@ class RAGAssistant:
         context_text = "\n\n---\n\n".join(search_results["documents"])
 
         try:
-            print(f'context_text: {context_text}')
             response = self.chain.invoke({
                 "context": context_text,
                 "question": input
