@@ -244,7 +244,7 @@ For questions, issues, or contributions:
 
 ## 🙏 Acknowledgments
 
-- **ReadyTensor**: This capstone project was created using ReadyTensor's git repository as the foundation. Special thanks to ReadyTensor for providing the learning track, capstone guidance, and repository template that served as the starting point for this RAG implementation tutorial.
+- **ReadyTensor**: This capstone project was created using ReadyTensor's git repository as the foundation. Special thanks to ReadyTensor for providing the learning track, capstone guidance, and repository template that served as the starting point for this RAG implementation tutorial. https://app.readytensor.ai/
 - **LangChain**: For the excellent framework and document loaders
 - **ChromaDB**: For the open-source vector database
 - **HuggingFace**: For sentence transformer models
