@@ -45,23 +45,29 @@ This project implements a complete RAG system that combines:
 
 ```
 RT-project-1/
-├── src/
-│   ├── app.py              # Main RAG assistant implementation
-│   └── vectordb.py         # Vector database wrapper (ChromaDB)
+├── src/                    # Source code
+│   ├── app.py             # Main RAG assistant implementation
+│   └── vectordb.py        # Vector database wrapper (ChromaDB)
+├── tests/                  # Test suite
+│   ├── test_app.py        # Tests for RAG assistant
+│   ├── test_vectordb.py   # Tests for vector database
+│   ├── conftest.py        # Shared test fixtures
+│   └── __init__.py        # Test package marker
 ├── data/                   # Document storage directory
-│   ├── *.pdf               # PDF documents
-│   ├── *.csv               # CSV files
-│   ├── *.txt               # Text files
-│   └── *.json              # JSON files
+│   ├── *.pdf              # PDF documents
+│   ├── *.csv              # CSV files
+│   ├── *.txt              # Text files
+│   └── *.json             # JSON files
 ├── chroma_db/              # ChromaDB persistent storage
 ├── requirements.txt        # Python dependencies
+├── pytest.ini             # Pytest configuration
 ├── .env                    # Environment variables (create from template)
-└── README.md               # This file
+└── README.md              # This file
 ```
 
 ## 🔧 Prerequisites
 
-- **Python**: 3.11 or higher
+- **Python**: 3.9 or higher
 - **API Keys**: At least one of the following:
   - OpenAI API key (for GPT models)
   - Groq API key (for Llama models)
@@ -197,19 +203,86 @@ Enter a question or 'quit' to exit: quit
 - **pypdf** (6.5.0): PDF processing
 - **jq** (1.10.0): JSON processing
 
+### Testing
+
+- **pytest** (8.3.4): Testing framework
+- **pytest-cov** (6.0.0): Coverage reporting
+- **pytest-mock** (3.14.0): Mocking utilities
+- **pytest-asyncio** (0.24.0): Async test support
+
 ### Utilities
 
 - **python-dotenv** (1.1.1): Environment variable management
-- **numpy** (2.3.3): Numerical operations
-- **torch** (2.8.0): PyTorch for transformer models
 
 See `requirements.txt` for the complete list of dependencies.
 
+### Logging
+
+The project includes comprehensive logging throughout:
+- **Log Levels**: DEBUG, INFO, WARNING, ERROR
+- **Structured Logging**: Module-based loggers for easy filtering
+- **Error Tracking**: Exception logging with stack traces
+
+### Error Handling
+
+- Graceful error handling throughout the codebase
+- Detailed error messages with context
+- Fallback mechanisms where appropriate
+- Comprehensive exception logging
+
 ## 💻 Development
+
+### Development Setup
+
+1. **Clone the repository** and navigate to the project directory
+
+2. **Create a virtual environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables** (create `.env` file):
+   ```env
+   OPENAI_API_KEY=your_key_here
+   # OR
+   GROQ_API_KEY=your_key_here
+   # OR
+   GOOGLE_API_KEY=your_key_here
+   ```
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage report
+pytest --cov=src --cov-report=html tests/
+
+# Run specific test file
+pytest tests/test_vectordb.py -v
+pytest tests/test_app.py -v
+```
+
+
+### Key Components
+
+- **`src/vectordb.py`**: Vector database operations (ChromaDB wrapper)
+- **`src/app.py`**: Main RAG assistant implementation
+- **`tests/`**: Comprehensive test suite with 25+ tests
 
 ### Development Dependencies
 
-All dependencies are listed in `requirements.txt`. For development, you may also want:
+All dependencies are listed in `requirements.txt`. Key development packages include:
+- `pytest`: Testing framework
+- `pytest-cov`: Coverage reporting
+- `pytest-mock`: Mocking utilities
 
 ## 📄 License
 
